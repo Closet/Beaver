@@ -1,140 +1,105 @@
 classes.layers.TestGameLayer = cc.Layer.extend({
-	_bib: null,
+	_beavers: [],
 	init: function() {
 		var size = cc.Director.getInstance().getWinSize();
-		
-		this._super();		
-		this._bib = new classes.sprites.Biber();
+		this._super();
 		this.setTouchEnabled(true);
 		this.setKeyboardEnabled(true);
 		this.setPosition(cc.p(0,0));
-		this.addChild(this._bib);
-		this._bib.setPosition(cc.p(size.width/3,size.height/4));
-		this._bib.scheduleUpdate(); //update 60fps in Sprite
-		this.schedule(this.update); //update 60fps in Layer
-		 
+		
+		//box2d  (32px === 1m !!)
+		var PTM_RATIO = 32;
+		var b2Vec2 = Box2D.Common.Math.b2Vec2
+            , b2BodyDef = Box2D.Dynamics.b2BodyDef
+            , b2Body = Box2D.Dynamics.b2Body
+            , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+            , b2World = Box2D.Dynamics.b2World
+            , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+            
+       	// Construct a world object, which will hold and simulate the rigid bodies.
+        this.world = new b2World(new b2Vec2(0, 0), true); //no gravity
+        this.world.SetContinuousPhysics(true);
+		
+		var fixDef = new b2FixtureDef;
+        fixDef.density = 0;
+        fixDef.friction = 0;
+        fixDef.restitution = 0;
+
+        var bodyDef = new b2BodyDef;
+
+        //create ground //w:40, h:22.5
+        bodyDef.type = b2Body.b2_staticBody;
+        fixDef.shape = new b2PolygonShape;
+        fixDef.shape.SetAsBox(40, 2);
+        // upper
+        bodyDef.position.Set(20, 22.5 + 1);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // bottom
+        bodyDef.position.Set(40, -1);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        
+        fixDef.shape.SetAsBox(2, 22.5);
+        // left
+        bodyDef.position.Set(-1, 11.25);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // right
+        bodyDef.position.Set(41, 11.25);
+        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+		
+		//TESTING TITLE 
+		var label = cc.LabelTTF.create("Beaver Moving Test", "Marker Felt", 32);
+        this.addChild(label, 0);
+        label.setColor(cc.c3b(0, 0, 255));
+        label.setPosition(size.width / 2, size.height - 50);
+        
+        //Adding Beavers
+        for(var i=0; i<4; i++)
+	       this._beavers[i] = new classes.sprites.Beaver(this, cc.p(300,100+150*i), i);
+
+		this.scheduleUpdate(); //update 60fps in Layer
+		
 		return true;
-		
-		
-		
-	/**
-     * @runAction ,sequence , delayTime, callfunc, fadeout
-     */
-		// onEnter:function () {
-        // this._super();
-// 
-        // var child = cc.Sprite.create(s_pathGrossini);
-        // child.setPosition(200, 200);
-        // this.addChild(child, 1);
-// 
-        // //Sum of all action's duration is 1.5 second.
-        // child.runAction(cc.RotateBy.create(3.5, 90));
-        // child.runAction(cc.Sequence.create(
-            // //cc.DelayTime.create(1.4),
-            // cc.FadeOut.create(0.2))
-        // );
-// 
-        // //After 1.5 second, self will be removed.
-        // this.runAction(cc.Sequence.create(
-            // cc.DelayTime.create(3.5),
-            // cc.CallFunc.create(this.onRemoveThis, this))
-        // );
-    // },
-// 
-    // onRemoveThis:function () {
-        // this.getParent().removeChild(this);
-        // this.onNextCallback(this);
-    // },
-    
-    
-    /**
-     * @Move By
-     */
-     // onEnter:function () {
-        // this._super();
-// 
-        // var grossini = cc.Sprite.create(s_pathGrossini);
-        // this.addChild(grossini, 0, 2);
-        // grossini.setPosition(200, 200);
-// 
-        // grossini.runAction(cc.Sequence.create(
-            // cc.MoveBy.create(1, cc.p(150, 0)),
-            // cc.CallFunc.create(this.onBugMe, this))
-        // );
-    
-    
-    /**
-     * @sprite property
-     */
-    // onEnter:function () {
-        // this._super();
-// 
-        // this._tamara.setScaleX(2.5);
-        // //window.tam = this._tamara;
-        // this._tamara.setScaleY(-1.0);
-        // this._tamara.setPosition(100, 70);
-        // this._tamara.setOpacity(128);
-// 
-        // this._grossini.setRotation(120);
-        // this._grossini.setPosition(winSize.width / 2, winSize.height / 2);
-        // this._grossini.setColor(cc.c3b(255, 0, 0));
-// 
-        // this._kathia.setPosition(winSize.width - 100, winSize.height / 2);
-        // this._kathia.setColor(cc.c3b(0, 0, 255));
-//     
-    
-    
-    /*
-     * @BazierTo
-     */
-    
-    // var Issue1008 = ActionsDemo.extend({
-    // onEnter:function () {
-        // this._super();
-// 
-        // this.centerSprites(1);
-// 
-        // // sprite 1
-// 
-        // this._grossini.setPosition(428, 279);
-// 
-        // // 3 and only 3 control points should be used for Bezier actions.
-        // var controlPoints1 = [ cc.p(428, 279), cc.p(100, 100), cc.p(100, 100)];
-        // var controlPoints2 = [ cc.p(100, 100), cc.p(428, 279), cc.p(428, 279)];
-// 
-        // var bz1 = cc.BezierTo.create(1.5, controlPoints1);
-        // var bz2 = cc.BezierTo.create(1.5, controlPoints2);
-        // var trace = cc.CallFunc.create(this.onTrace, this);
-        // var delay = cc.DelayTime.create(0.25);
-// 
-        // var rep = cc.RepeatForever.create(cc.Sequence.create(bz1, bz2, trace,delay));
-// 
-        // this._grossini.runAction(rep);
-        // //this._grossini.runAction(cc.Sequence.create(bz1, bz2, trace,delay));
-// 
-    // },
-    // onTrace:function (sender) {
-        // var pos = sender.getPosition();
-        // cc.log("Position x: " + pos.x + ' y:' + pos.y);
-        // if (Math.round(pos.x) != 428 || Math.round(pos.y) != 279)
-            // this.log("Error: Issue 1008 is still open");
-// 
-        // this.tracePos = pos;
-    // },
-	
 	},
-	update: function() { 
+	update: function(dt) {
+
+		for(var i=0; i<4; i++)
+			this._beavers[i].update();
+			
+		//It is recommended that a fixed time step is used with Box2D for stability
+		//of the simulation, however, we are using a variable time step here.
+		//You need to make an informed choice, the following URL is useful
+		//http://gafferongames.com/game-physics/fix-your-timestep/
+
+		var velocityIterations = 6;
+		var positionIterations = 2;
+
+		// Instruct the world to perform a single step of simulation. It is
+		// generally best to keep the time step and iterations fixed.
+		this.world.Step(dt, velocityIterations, positionIterations);
+
+		//Iterate over the bodies in the physics world
+		for (var b = this.world.GetBodyList(); b; b = b.GetNext()) {
+			if (b.GetUserData() != null) {
+				//Synchronize the AtlasSprites position and rotation with the corresponding body
+				var myActor = b.GetUserData();
+				myActor.setPosition(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO);
+				myActor.setRotation(cc.RADIANS_TO_DEGREES(b.GetAngle()));
+				//console.log(b.GetAngle());
+			}
+		}
 	},
-	onTouchEnded: function() {
-		this._bib.handleTouch(pTouch[0].getLocation());
-	},
-	onTouchMoved: function() {
-		this._bib.handleTouchMove(pTouch[0].getLocation());
-	},
+	// onTouchEnded: function() {
+		// this._bib.handleTouch(pTouch[0].getLocation());
+	// },
+	// onTouchMoved: function() {
+		// this._bib.handleTouchMove(pTouch[0].getLocation());
+	// },
 	onKeyUp: function() {
-		
+ 		this._beavers[0].handleKeyUp();
 	},
 	onKeyDown: function(e) {
-		this._bib.handleKey(e);
+		this._beavers[0].handleKeyDown(e);
+		// var i = Math.random() * 4
+		// this._beavers[parseInt(i)].handleKey(e);
 	}
 });

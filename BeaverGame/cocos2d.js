@@ -48,7 +48,7 @@
         	'game/js/classes/scenes/TestGameScene.js',
         	
         	'game/js/classes/sprites/sprites.js', //namespace
-        	'game/js/classes/sprites/Biber.js',
+        	'game/js/classes/sprites/Beaver.js',
         	
         	//resources
         	'game/js/config/resource.js',
