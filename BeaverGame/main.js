@@ -80,4 +80,4 @@ var cocos2dApp = cc.Application.extend({
     }
 });
 
-var myApp = new cocos2dApp(classes.scenes.TestGameScene);
+var myApp = new cocos2dApp(classes.scenes.SplashScreenScene);

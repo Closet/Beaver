@@ -14,7 +14,7 @@ classes.sprites.Beaver = cc.Sprite.extend({
         this.setBlendFunc(gl.SRC_ALPHA, gl.ONE);
         this._texture = cc.Sprite.createWithTexture(this.getTexture()); //second argument cc.rect(px,py,w,h)
         this.addBeaverWithCoords(layer.world, p);
-        layer.addChild(this._texture, 0);
+        layer.addChild(this._texture, 0); //z: 0
     },
     addBeaverWithCoords: function (world, p) {
         var tex = this._texture;
@@ -68,15 +68,20 @@ classes.sprites.Beaver = cc.Sprite.extend({
         this._rightKeyDown = false;
     },
     _turn: function () {
-        //var curVector = this._vector; //TODO: reference TEST!
-        if (this._leftKeyDown) this._currentAngle-=5, this._body.SetAngle(this._currentAngle*(Math.PI/180));
-        if (this._rightKeyDown) this._currentAngle+=5, this._body.SetAngle(this._currentAngle*(Math.PI/180));
-		if(this._currentAngle < 0) this._currentAngle = 355;
-		if(this._currentAngle > 360) this._currentAngle = 5;
-        this._vector = new Box2D.Common.Math.b2Vec2();
-        this._vector.x = 5*Math.cos(-this._currentAngle*(Math.PI/180));
-        this._vector.y = 5*Math.sin(-this._currentAngle*(Math.PI/180));
-        console.log(" a: "+this._currentAngle+" vx: "+this._vector.x+" vy: "+this._vector.y);
+        var curVector = this._vector;
+        var curAngle = this._currentAngle;
+        
+        if (this._leftKeyDown) curAngle-=5, this._body.SetAngle(curAngle*(Math.PI/180));
+        if (this._rightKeyDown) curAngle+=5, this._body.SetAngle(curAngle*(Math.PI/180));
+		if(curAngle < 0) curAngle = 355;
+		if(curAngle > 360) curAngle = 5;
+        curVector = new Box2D.Common.Math.b2Vec2();
+        curVector.x = 5*Math.cos(-curAngle*(Math.PI/180)); // 5: velocity
+        curVector.y = 5*Math.sin(-curAngle*(Math.PI/180));
+        console.log(" a: "+curAngle+" vx: "+curVector.x+" vy: "+curVector.y);
+        
+        this._vector = curVector;
+        this._currentAngle = curAngle;
         },
     _move: function () {
         var that = this;

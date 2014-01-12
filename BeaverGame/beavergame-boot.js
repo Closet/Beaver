@@ -24,6 +24,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+BG = {};
+
 (function () {
     var d = document;
     var c = {
@@ -38,20 +41,24 @@
         engineDir:'externals/Cocos2d-html5-v2.2.2/cocos2d/',
         //SingleEngineFile:'',
         appFiles:[
+			//Configs
+        	'game/js/config/Resource.js',
+        	'game/js/config/GameConfig.js',        
+        
         	//classes
         	'game/js/classes/classes.js', //namespace
+        	'game/js/classes/GameController.js',
         	
         	'game/js/classes/layers/layers.js', //namespace
-        	'game/js/classes/layers/TestGameLayer.js',
+        	'game/js/classes/layers/DuelGameLayer.js',
+        	'game/js/classes/layers/SplashScreenLayer.js',
         	
         	'game/js/classes/scenes/scenes.js', //namespace
-        	'game/js/classes/scenes/TestGameScene.js',
+        	'game/js/classes/scenes/DuelGameScene.js',
+        	'game/js/classes/scenes/SplashScreenScene.js',
         	
         	'game/js/classes/sprites/sprites.js', //namespace
         	'game/js/classes/sprites/Beaver.js',
-        	
-        	//resources
-        	'game/js/config/resource.js',
         ]
     };
 

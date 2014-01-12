@@ -1,4 +1,4 @@
-classes.layers.TestGameLayer = cc.Layer.extend({
+classes.layers.DuelGameLayer = cc.Layer.extend({
 	_beavers: [],
 	init: function() {
 		var size = cc.Director.getInstance().getWinSize();
@@ -48,7 +48,7 @@ classes.layers.TestGameLayer = cc.Layer.extend({
 		
 		//TESTING TITLE 
 		var label = cc.LabelTTF.create("Beaver Moving Test", "Marker Felt", 32);
-        this.addChild(label, 0);
+        this.addChild(label, 1); //z === 1 : UI
         label.setColor(cc.c3b(0, 0, 255));
         label.setPosition(size.width / 2, size.height - 50);
         
@@ -88,12 +88,6 @@ classes.layers.TestGameLayer = cc.Layer.extend({
 			}
 		}
 	},
-	// onTouchEnded: function() {
-		// this._bib.handleTouch(pTouch[0].getLocation());
-	// },
-	// onTouchMoved: function() {
-		// this._bib.handleTouchMove(pTouch[0].getLocation());
-	// },
 	onKeyUp: function() {
  		this._beavers[0].handleKeyUp();
 	},
