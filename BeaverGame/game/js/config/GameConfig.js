@@ -1,3 +1,4 @@
+BG = {};
 //game state
 BG.GAME_STATE = {
 	SPLASH_SCREEN: 1,
@@ -13,7 +14,7 @@ BG.GAME_STATE = {
 		DUEL: 8
 	},
 	OVER: 9
-}
+};
 
 //keys
 BG.KEYS = [];

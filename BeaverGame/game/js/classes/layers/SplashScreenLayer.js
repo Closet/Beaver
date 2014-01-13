@@ -15,9 +15,9 @@ classes.layers.SplashScreenLayer = cc.LayerColor.extend({
         label.setColor(cc.c3b(0, 255, 255));
         label.setPosition(size.width / 2, size.height - 50);
         
-        this._screens[0] = cc.Sprite.create(s_splashScreen1);
-        this._screens[1] = cc.Sprite.create(s_splashScreen2);
-        this._screens[2] = cc.Sprite.create(s_splashScreen3);
+        this._screens[0] = cc.Sprite.create(s_SplashScreen1);
+        this._screens[1] = cc.Sprite.create(s_SplashScreen2);
+        this._screens[2] = cc.Sprite.create(s_SplashScreen3);
         for(var s in this._screens)
         	this._screens[s].setPosition(size.width/2, size.height/2);
         
@@ -34,7 +34,7 @@ classes.layers.SplashScreenLayer = cc.LayerColor.extend({
 		{
 			if(this._curScreen === 3) 
 			{
-				BG.GameController.getInstance().setCurScene(new classes.scenes.DuelGameScene);
+				classes.GameController.getInstance().setCurScene(classes.scenes.DuelGameScene.getInstance());
 				return;
 			}
 			this.addChild(this._screens[this._curScreen], 0);

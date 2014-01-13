@@ -1,6 +1,8 @@
 classes.layers.DuelGameLayer = cc.Layer.extend({
 	_beavers: [],
+	_itemPopCount: 0,
 	init: function() {
+		var that = this;
 		var size = cc.Director.getInstance().getWinSize();
 		this._super();
 		this.setTouchEnabled(true);
@@ -15,10 +17,33 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
             , b2FixtureDef = Box2D.Dynamics.b2FixtureDef
             , b2World = Box2D.Dynamics.b2World
             , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-            
+        
+        //ContactListener
+        var contactListener = new Box2D.Dynamics.b2ContactListener;
+        contactListener.BeginContact = function(contact) {
+        	console.log(contact.IsSensor());
+        	if(!contact.IsSensor()) return;
+        	var beaver = contact.GetFixtureA().GetBody().GetUserData();
+        	var item = contact.GetFixtureB().GetBody().GetUserData();
+	        switch(item.getType())
+	        {
+	        	case BG.ITEM_TYPE.SPEED:
+	        		beaver.addItem(item);
+	        		that.removeChild(item, true);
+	        		break;
+	        	case BG.ITEM_TYPE.SHIELD:
+	       			break;
+				//TODO
+	       	}
+	    };
+	    contactListener.EndContact = function(contact) {};
+	    contactListener.PostSolve = function(contact, impulse) {};
+	    contactListener.PreSolve = function(contact, oldManifold) {};
+        
        	// Construct a world object, which will hold and simulate the rigid bodies.
         this.world = new b2World(new b2Vec2(0, 0), true); //no gravity
         this.world.SetContinuousPhysics(true);
+		this.world.SetContactListener(contactListener);
 		
 		var fixDef = new b2FixtureDef;
         fixDef.density = 0;
@@ -60,11 +85,29 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 		
 		return true;
 	},
+	popItem: function() {
+		if(Math.random() <= 0.5)
+		{
+			var size = cc.Director.getInstance().getWinSize();
+			do {
+				var randX = Math.random();
+				var randY = Math.random();
+			} while( (0.2 >= randX || randX >= 0.8) &&
+					  (0.2 >= randY || randY >= 0.8) );
+					 
+			var x = randX*size.width, y = randY*size.height;
+			
+			new classes.sprites.Item(this, cc.p(x, y), BG.ITEM_TYPE.SPEED);
+		}
+	},
 	update: function(dt) {
 
 		for(var i=0; i<4; i++)
 			this._beavers[i].update();
-			
+		
+		if(this._itemPopCount === 120) //every 2s (p=0.5) 
+			this._itemPopCount = 0, this.popItem();
+		this._itemPopCount++;
 		//It is recommended that a fixed time step is used with Box2D for stability
 		//of the simulation, however, we are using a variable time step here.
 		//You need to make an informed choice, the following URL is useful
@@ -84,7 +127,6 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 				var myActor = b.GetUserData();
 				myActor.setPosition(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO);
 				myActor.setRotation(cc.RADIANS_TO_DEGREES(b.GetAngle()));
-				//console.log(b.GetAngle());
 			}
 		}
 	},
@@ -93,7 +135,5 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 	},
 	onKeyDown: function(e) {
 		this._beavers[0].handleKeyDown(e);
-		// var i = Math.random() * 4
-		// this._beavers[parseInt(i)].handleKey(e);
 	}
 });

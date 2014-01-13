@@ -24,9 +24,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-BG = {};
-
 (function () {
     var d = document;
     var c = {
@@ -52,13 +49,16 @@ BG = {};
         	'game/js/classes/layers/layers.js', //namespace
         	'game/js/classes/layers/DuelGameLayer.js',
         	'game/js/classes/layers/SplashScreenLayer.js',
+        	'game/js/classes/layers/MainMenuLayer.js',
         	
         	'game/js/classes/scenes/scenes.js', //namespace
         	'game/js/classes/scenes/DuelGameScene.js',
         	'game/js/classes/scenes/SplashScreenScene.js',
+        	'game/js/classes/scenes/MainMenuScene.js',
         	
         	'game/js/classes/sprites/sprites.js', //namespace
         	'game/js/classes/sprites/Beaver.js',
+        	'game/js/classes/sprites/Item.js'
         ]
     };
 

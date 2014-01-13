@@ -6,18 +6,26 @@ classes.sprites.Beaver = cc.Sprite.extend({
     _rightKeyDown: false,
     _vector: new cc.kmVec2(),
     _currentAngle: 0,
+    _curVelocity: 5,
     _body: null,
+    _itemList: [],
     ctor: function (layer, p, id) {
         this._super();
         this._id = id;
-        this.initWithFile(s_beaver);
+        this.initWithFile(s_Beaver);
         this.setBlendFunc(gl.SRC_ALPHA, gl.ONE);
-        this._texture = cc.Sprite.createWithTexture(this.getTexture()); //second argument cc.rect(px,py,w,h)
         this.addBeaverWithCoords(layer.world, p);
-        layer.addChild(this._texture, 0); //z: 0
+        layer.addChild(this, 0); //z: 0
+    },
+    getID: function() {
+    	return this._id;
+    },
+    addItem: function(item) {
+    	this._itemList[this._itemList.length-1] = item;
+    	console.log("Beaver id: "+this._id+" get Item("+item.getType()+")");
     },
     addBeaverWithCoords: function (world, p) {
-        var tex = this._texture;
+        var tex = this;
         tex.setPosition(p.x, p.y);
 
         // Define the dynamic body.
@@ -41,6 +49,7 @@ classes.sprites.Beaver = cc.Sprite.extend({
         fixtureDef.shape = dynamicBox;
         fixtureDef.density = 0;
         fixtureDef.friction = 0;
+        //fixtureDef.isSensor = true;
         body.CreateFixture(fixtureDef);
         
         this._body = body;
@@ -56,14 +65,12 @@ classes.sprites.Beaver = cc.Sprite.extend({
         }
     },
     handleKeyDown: function (e) {
-    	console.log("keyDown!");
         if (!this._leftKeyDown || !this._rightKeyDown) {
             if (e === cc.KEY.left) this._leftKeyDown = true;
             else if (e === cc.KEY.right) this._rightKeyDown = true;
         }
     },
     handleKeyUp: function () {
-    	console.log("keyUp!");
         this._leftKeyDown = false;
         this._rightKeyDown = false;
     },
@@ -76,15 +83,14 @@ classes.sprites.Beaver = cc.Sprite.extend({
 		if(curAngle < 0) curAngle = 355;
 		if(curAngle > 360) curAngle = 5;
         curVector = new Box2D.Common.Math.b2Vec2();
-        curVector.x = 5*Math.cos(-curAngle*(Math.PI/180)); // 5: velocity
-        curVector.y = 5*Math.sin(-curAngle*(Math.PI/180));
-        console.log(" a: "+curAngle+" vx: "+curVector.x+" vy: "+curVector.y);
+        curVector.x = this._curVelocity*Math.cos(-curAngle*(Math.PI/180)); // 5: velocity
+        curVector.y = this._curVelocity*Math.sin(-curAngle*(Math.PI/180));
+        //console.log(" a: "+curAngle+" vx: "+curVector.x+" vy: "+curVector.y);
         
         this._vector = curVector;
         this._currentAngle = curAngle;
         },
     _move: function () {
-        var that = this;
         this._body.SetLinearVelocity(this._vector);
         this._body.SetAwake(true);
     }
