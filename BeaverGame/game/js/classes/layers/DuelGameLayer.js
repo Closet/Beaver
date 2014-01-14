@@ -21,56 +21,78 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
         //ContactListener
         var contactListener = new Box2D.Dynamics.b2ContactListener;
         contactListener.BeginContact = function(contact) {
-        	console.log(contact.IsSensor());
-        	if(!contact.IsSensor()) return;
-        	var beaver = contact.GetFixtureA().GetBody().GetUserData();
-        	var item = contact.GetFixtureB().GetBody().GetUserData();
-	        switch(item.getType())
-	        {
-	        	case BG.ITEM_TYPE.SPEED:
-	        		beaver.addItem(item);
-	        		that.removeChild(item, true);
-	        		break;
-	        	case BG.ITEM_TYPE.SHIELD:
-	       			break;
-				//TODO
-	       	}
+        	if(contact.GetFixtureA().GetBody().GetUserData().name === "Beaver")
+        	{
+	        	if(!contact.IsSensor()) 
+	        	{
+	        		if(contact.GetFixtureB().GetBody().GetUserData().name === "Home")
+	        		{
+	        			
+	        		}
+	        		else(contact.GetFixtureB().GetBody().GetUserData().name === "Twig")
+	        		{
+	        			
+	        		}
+	        	}
+	        	else
+	        	{
+		        	var beaver = contact.GetFixtureA().GetBody().GetUserData();
+		        	var item = contact.GetFixtureB().GetBody().GetUserData();
+		        	
+		        	if(!item) 
+		        	{
+		        		console.log("todo: return!");
+		        		return;
+		        	}
+		        	
+			        switch(item.getType())
+			        {
+			        	case BG.ITEM_TYPE.SPEED:
+			        		beaver.addItem(item);
+			        		that.removeChild(item, true);
+			        		break;
+			        	case BG.ITEM_TYPE.SHIELD:
+			       			break;
+						//TODO
+			       	}
+		       	}
+			}
 	    };
 	    contactListener.EndContact = function(contact) {};
 	    contactListener.PostSolve = function(contact, impulse) {};
 	    contactListener.PreSolve = function(contact, oldManifold) {};
         
        	// Construct a world object, which will hold and simulate the rigid bodies.
-        this.world = new b2World(new b2Vec2(0, 0), true); //no gravity
+        this.world = new b2World(new b2Vec2(0.1, 0.1), true); //no gravity
         this.world.SetContinuousPhysics(true);
 		this.world.SetContactListener(contactListener);
 		
-		var fixDef = new b2FixtureDef;
-        fixDef.density = 0;
-        fixDef.friction = 0;
-        fixDef.restitution = 0;
-
-        var bodyDef = new b2BodyDef;
-
-        //create ground //w:40, h:22.5
-        bodyDef.type = b2Body.b2_staticBody;
-        fixDef.shape = new b2PolygonShape;
-        fixDef.shape.SetAsBox(40, 2);
-        // upper
-        bodyDef.position.Set(20, 22.5 + 1);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        // bottom
-        bodyDef.position.Set(40, -1);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        
-        fixDef.shape.SetAsBox(2, 22.5);
-        // left
-        bodyDef.position.Set(-1, 11.25);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        // right
-        bodyDef.position.Set(41, 11.25);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-		
+		// var fixDef = new b2FixtureDef;
+        // fixDef.density = 0;
+        // fixDef.friction = 0;
+        // fixDef.restitution = 0;
+// 
+        // var bodyDef = new b2BodyDef;
+// 
+        // //create ground //w:40, h:22.5
+        // bodyDef.type = b2Body.b2_staticBody;
+        // fixDef.shape = new b2PolygonShape;
+        // fixDef.shape.SetAsBox(40, 2);
+        // // upper
+        // bodyDef.position.Set(20, 22.5 + 1);
+        // this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // // bottom
+        // bodyDef.position.Set(40, -1);
+        // this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+//         
+        // fixDef.shape.SetAsBox(2, 22.5);
+        // // left
+        // bodyDef.position.Set(-1, 11.25);
+        // this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // // right
+        // bodyDef.position.Set(41, 11.25);
+        // this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+// 		
 		//TESTING TITLE 
 		var label = cc.LabelTTF.create("Beaver Moving Test", "Marker Felt", 32);
         this.addChild(label, 1); //z === 1 : UI
@@ -105,7 +127,7 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 		for(var i=0; i<4; i++)
 			this._beavers[i].update();
 		
-		if(this._itemPopCount === 120) //every 2s (p=0.5) 
+		if(this._itemPopCount === 300) //every 2s (p=0.5) 
 			this._itemPopCount = 0, this.popItem();
 		this._itemPopCount++;
 		//It is recommended that a fixed time step is used with Box2D for stability

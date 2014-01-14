@@ -1,10 +1,11 @@
 classes.sprites.Beaver = cc.Sprite.extend({
+	name: "Beaver",
 	_id: 0,
 	_startFlag: false,
     _texture: null,
     _leftKeyDown: false,
     _rightKeyDown: false,
-    _vector: new cc.kmVec2(),
+    _vector: new Box2D.Common.Math.b2Vec2(),
     _currentAngle: 0,
     _curVelocity: 5,
     _body: null,
@@ -82,14 +83,14 @@ classes.sprites.Beaver = cc.Sprite.extend({
         if (this._rightKeyDown) curAngle+=5, this._body.SetAngle(curAngle*(Math.PI/180));
 		if(curAngle < 0) curAngle = 355;
 		if(curAngle > 360) curAngle = 5;
-        curVector = new Box2D.Common.Math.b2Vec2();
+        //curVector = new Box2D.Common.Math.b2Vec2();
         curVector.x = this._curVelocity*Math.cos(-curAngle*(Math.PI/180)); // 5: velocity
         curVector.y = this._curVelocity*Math.sin(-curAngle*(Math.PI/180));
         //console.log(" a: "+curAngle+" vx: "+curVector.x+" vy: "+curVector.y);
         
         this._vector = curVector;
         this._currentAngle = curAngle;
-        },
+    },
     _move: function () {
         this._body.SetLinearVelocity(this._vector);
         this._body.SetAwake(true);

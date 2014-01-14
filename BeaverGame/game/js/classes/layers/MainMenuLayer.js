@@ -8,7 +8,7 @@ classes.layers.MainMenuLayer = cc.LayerColor.extend({
 		this.setPosition(cc.p(0,0));
 		this.setColor(cc.c3b(255,255,255));
 		
-		//TESTING TITLE 
+		//TESTING TITLE
 		var label = cc.LabelTTF.create("MainMenuScreen Test:", "Marker Felt", 32);
         this.addChild(label, 1);
         label.setColor(cc.c3b(255, 0, 255));
