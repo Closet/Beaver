@@ -1,6 +1,7 @@
 classes.layers.DuelGameLayer = cc.Layer.extend({
 	_beavers: [],
 	_itemPopCount: 0,
+	_twigPopCount: 0,
 	init: function() {
 		var that = this;
 		var size = cc.Director.getInstance().getWinSize();
@@ -122,6 +123,24 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 			new classes.sprites.Item(this, cc.p(x, y), BG.ITEM_TYPE.SPEED);
 		}
 	},
+	
+	//_twigPopCount
+		popTwig: function() {
+		if(Math.random() <= 0.5)
+		{
+			var size = cc.Director.getInstance().getWinSize();
+			do {
+				var randX = Math.random();
+				var randY = Math.random();
+			} while( (0.2 >= randX || randX >= 0.8) &&
+					  (0.2 >= randY || randY >= 0.8) );
+					 
+			var x = randX*size.width, y = randY*size.height;
+			
+			new classes.sprites.Twig(this, cc.p(x, y), BG.TWIG_TYPE.NORMAL);
+		}
+	},
+	
 	update: function(dt) {
 
 		for(var i=0; i<4; i++)
@@ -130,6 +149,12 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 		if(this._itemPopCount === 300) //every 2s (p=0.5) 
 			this._itemPopCount = 0, this.popItem();
 		this._itemPopCount++;
+		
+		if(this._twigPopCount === 120) //every 2s (p=0.5) 
+			this._twigPopCount = 0, this.popTwig();
+		this._twigPopCount++;		
+		
+		
 		//It is recommended that a fixed time step is used with Box2D for stability
 		//of the simulation, however, we are using a variable time step here.
 		//You need to make an informed choice, the following URL is useful

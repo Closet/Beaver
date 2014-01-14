@@ -37,13 +37,12 @@ BG.ITEM_TYPE = {
 
 BG.OBSTACLE_TYPE = {
 	//TODO
-}
+};
 
 //branch types
-BG.BRANCH_TYPE = {
+BG.TWIG_TYPE = {
     NORMAL:1,
-    WEEK:2,
-    BEST:3
+    STRONG:2
 };
 
 //play state
