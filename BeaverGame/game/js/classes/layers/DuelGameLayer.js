@@ -124,8 +124,8 @@ classes.layers.DuelGameLayer = cc.Layer.extend({
 		}
 	},
 	
-	//_twigPopCount
-		popTwig: function() {
+	
+	popTwig: function() {
 		if(Math.random() <= 0.5)
 		{
 			var size = cc.Director.getInstance().getWinSize();

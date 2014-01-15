@@ -10,19 +10,29 @@ classes.sprites.Beaver = cc.Sprite.extend({
     _curVelocity: 5,
     _body: null,
     _itemList: [],
+    _twigs:[],
+    _showTwigsLock: false,
+    _curLayer: null,
     ctor: function (layer, p, id) {
         this._super();
         this._id = id;
+        this._curLayer = layer;
         this.initWithFile(s_Beaver);
         this.setBlendFunc(gl.SRC_ALPHA, gl.ONE);
-        this.addBeaverWithCoords(layer.world, p);
+        this.addBeaverWithCoords(this._curLayer.world, p);
         layer.addChild(this, 0); //z: 0
     },
     getID: function() {
     	return this._id;
     },
-    addItem: function(item) {
-    	this._itemList[this._itemList.length-1] = item;
+    addTwig: function(twig) {
+	    this._twigs[this._twigs.length] = twig;
+	    this._curLayer.removeChild(twig, true);
+    	console.log("Beaver id: "+this._id+" get Twig("+twig.getType()+")");
+    },
+    addItem: function(item) { //TODO
+    	this._itemList[this._itemList.length] = item;
+    	this._curLayer.removeChild(item, true);
     	console.log("Beaver id: "+this._id+" get Item("+item.getType()+")");
     },
     addBeaverWithCoords: function (world, p) {
@@ -55,13 +65,28 @@ classes.sprites.Beaver = cc.Sprite.extend({
         
         this._body = body;
     },
+    slow: function () {
+    	this._curVelocity = 1;
+    	console.log("slow 2s beaver: "+this._id);
+    	this.runAction(cc.Sequence.create(
+    		cc.Blink.create(2, 5),
+    		cc.CallFunc.create(function () {
+    			this._curVelocity = 5;
+    		}, this)
+    	));
+    },
     update: function () {
     	if(this._startFlag)
-        	this._move();
+        	this._move(), this._showTwigs();
+        else this._body.SetActive(false);
+        
         if (this._leftKeyDown || this._rightKeyDown)
         {
-        	if(!this._startFlag) 
+        	if(!this._startFlag)
+        	{
+        		this.slow();
         		this._startFlag = true;
+        	}
         	this._turn();
         }
     },
@@ -83,7 +108,6 @@ classes.sprites.Beaver = cc.Sprite.extend({
         if (this._rightKeyDown) curAngle+=5, this._body.SetAngle(curAngle*(Math.PI/180));
 		if(curAngle < 0) curAngle = 355;
 		if(curAngle > 360) curAngle = 5;
-        //curVector = new Box2D.Common.Math.b2Vec2();
         curVector.x = this._curVelocity*Math.cos(-curAngle*(Math.PI/180)); // 5: velocity
         curVector.y = this._curVelocity*Math.sin(-curAngle*(Math.PI/180));
         //console.log(" a: "+curAngle+" vx: "+curVector.x+" vy: "+curVector.y);
@@ -93,7 +117,64 @@ classes.sprites.Beaver = cc.Sprite.extend({
     },
     _move: function () {
         this._body.SetLinearVelocity(this._vector);
-        this._body.SetAwake(true);
+        this._body.SetActive(true);
+        //this._body.SetAwake(true);
+    },
+    _showTwigs: function () {
+    	
+    	// var joint_def = new Box2D.Dynamics.Joints.b2DistanceJointDef();
+		    // joint_def.frequencyHz = 0;
+//     	
+    	// if(this._twigs.length === 1)
+    	// {
+			// joint_def.bodyA = this._body;
+			// joint_def.localAnchorA = new Box2D.Common.Math.b2Vec2(0, 0); 
+    	// }
+    	// else
+    	// {
+    		// joint_def.bodyA = this._twigs[this._twigs.length-2].getBody();
+		    // joint_def.localAnchorA = new Box2D.Common.Math.b2Vec2(0, 0);
+    	// }
+//     	
+    	// var x = joint_def.bodyA.GetPosition().x * PTM_RATIO;        
+		// var y = joint_def.bodyA.GetPosition().y * PTM_RATIO;
+		// var newTwig = new classes.sprites.Twig(this._curLayer, cc.p(x, y), this._twigs[this._twigs.length-1].getType());
+// 		
+		// joint_def.bodyB = newTwig.getBody();
+		// joint_def.localAnchorB = new Box2D.Common.Math.b2Vec2(0, 0);
+		// this._twigs[this._twigs.length-1] = newTwig;
+// 		
+		// this._curLayer.world.CreateJoint(joint_def);
+		// this._twigs[this._twigs.length-1].setIsStuck(true);
+		// this._curLayer.addChild(this._twigs[this._twigs.length-1]);
+		
+		for (var i in this._twigs) {
+			if (!this._twigs[i].getIsStuck()) {
+				this._twigs[i].setIsStuck(true);
+				console.log(i);
+				var joint_def = new Box2D.Dynamics.Joints.b2DistanceJointDef();
+				joint_def.frequencyHz = 0;
+
+				if (i == 0) {
+					joint_def.bodyA = this._body;
+					joint_def.localAnchorA = new Box2D.Common.Math.b2Vec2(0, 0);
+				} else {
+					joint_def.bodyA = this._twigs[i - 1].getBody();
+					joint_def.localAnchorA = new Box2D.Common.Math.b2Vec2(0, 0);
+				}
+
+				var x = joint_def.bodyA.GetPosition().x * PTM_RATIO;
+				var y = joint_def.bodyA.GetPosition().y * PTM_RATIO;
+				var newTwig = new classes.sprites.Twig(this._curLayer, cc.p(x, y), this._twigs[i].getType());
+				this._twigs[i] = newTwig;
+				joint_def.bodyB = this._twigs[i].getBody();
+				joint_def.localAnchorB = new Box2D.Common.Math.b2Vec2(0, 0);
+				this._twigs[i].setIsStuck(true);
+
+				this._curLayer.world.CreateJoint(joint_def);
+			}
+		}
+		
     }
 });
 

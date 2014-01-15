@@ -11,6 +11,8 @@ var s_SplashScreen3 = "BeaverGame_splashscreen.png";
 var s_Item_Speed = "Item_Speed.png";
 //var s_Item_Shield = "Item_Shield.png";
 
+var s_Twig_Normal = "Twig_Normal.png";
+
 var g_resources = [
     //image
     {src:s_HelloWorld},
@@ -22,7 +24,11 @@ var g_resources = [
 	{src:s_SplashScreen2},
 	{src:s_SplashScreen3},
 	{src:s_Item_Speed},
-	//{src:s_Item_Shield}
+	//{src:s_Item_Shield}	
+	
+	{src:s_Twig_Normal}
+	
+
 	
     //plist
 
